@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>{% block title %}Home{% endblock %}</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-book-half"></i> PRAJWALBOOKSTORE
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-item nav-link" href="/">Home</a>
+                    {% if user.is_authenticated %}
+                    <a class="nav-item nav-link" href="/orders">My Orders</a>
+                    {% if user.is_admin %}
+                    <a class="nav-item nav-link" href="/admin">Admin Dashboard</a>
+                    {% endif %}
+                    <span class="nav-item nav-link text-white opacity-75 me-3">Hello, {{ user.first_name }}</span>
+                    <a class="nav-item btn btn-outline-danger ms-2 btn-sm d-flex align-items-center"
+                        href="/logout">Logout</a>
+                    {% else %}
+                    <a class="nav-item nav-link" href="/login">Login</a>
+                    <a class="nav-item btn btn-primary ms-2 btn-sm d-flex align-items-center text-white"
+                        href="/sign-up">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white py-5 mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-uppercase mb-3 fw-bold text-primary">PrajwalBookStore</h5>
+                    <p class="small text-muted">Your premier destination for literary excellence. Discover a world of
+                        knowledge, adventure, and inspiration with our curated collection.</p>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-uppercase mb-3 fw-bold">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-white-50 text-decoration-none hover-white">Home</a>
+                        </li>
+                        <li class="mb-2"><a href="/login"
+                                class="text-white-50 text-decoration-none hover-white">Login</a></li>
+                        <li class="mb-2"><a href="/sign-up" class="text-white-50 text-decoration-none hover-white">Sign
+                                Up</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-uppercase mb-3 fw-bold">Contact Us</h5>
+                    <p class="small text-white-50 mb-2">
+                        <i class="bi bi-geo-alt me-2 text-info"></i> Kapan, Kathmandu
+                    </p>
+                    <p class="small text-white-50 mb-2">
+                        <i class="bi bi-envelope me-2 text-info"></i> prajwaladhikari754@gmail.com
+                    </p>
+                    <p class="small text-white-50">
+                        <i class="bi bi-telephone me-2 text-info"></i> +977 9742938274
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="text-uppercase mb-3 fw-bold">Follow Us</h5>
+                    <p class="small text-muted mb-3">Stay connected with us on social media.</p>
+                    <a href="https://www.instagram.com/prazwal_adhikari02" target="_blank"
+                        class="btn btn-outline-light btn-sm rounded-pill">
+                        <i class="bi bi-instagram me-1"></i> Instagram
+                    </a>
+                </div>
+            </div>
+            <hr class="border-secondary my-4">
+            <div class="text-center small text-muted">
+                &copy; 2026 PrajwalBookStore. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }}{% endblock %}
+{% block content %}
+<div class="row mt-5">
+    <div class="col-md-4">
+        {% if book.image_url %}
+        {% if book.image_url.startswith('http') %}
+        <img src="{{ book.image_url }}" class="img-fluid rounded shadow" alt="{{ book.title }}">
+        {% elif book.image_url == '' %}
+        <div class="bg-light d-flex align-items-center justify-content-center rounded shadow" style="height: 400px;">
+            <i class="bi bi-book display-1 text-secondary"></i>
+        </div>
+        {% else %}
+        <img src="{{ url_for('static', filename='images/' + book.image_url) }}" class="img-fluid rounded shadow"
+            alt="{{ book.title }}">
+        {% endif %}
+        {% else %}
+        <div class="bg-light d-flex align-items-center justify-content-center rounded shadow" style="height: 400px;">
+            <i class="bi bi-book display-1 text-secondary"></i>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <h1>{{ book.title }}</h1>
+        <h4 class="text-muted">{{ book.author }}</h4>
+        <h2 class="text-primary mt-3">${{ book.price }}</h2>
+        <p class="mt-4">{{ book.description }}</p>
+
+        <hr>
+
+        <div class="mb-4">
+            <h5>Share:</h5>
+            <a href="https://twitter.com/intent/tweet?text=Check out {{ book.title }} on Online Book Store!"
+                target="_blank" class="btn btn-outline-info btn-sm me-2"><i class="bi bi-twitter"></i> Twitter</a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank"
+                class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-facebook"></i> Facebook</a>
+            <a href="https://wa.me/?text=Check out {{ book.title }}: {{ request.url }}" target="_blank"
+                class="btn btn-outline-success btn-sm"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+        </div>
+
+        <div class="d-flex align-items-center">
+            {% if book.stock > 0 %}
+            <span class="badge bg-success me-3">In Stock ({{ book.stock }})</span>
+            {% if user.is_authenticated %}
+            <form action="/buy/{{ book.id }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-lg btn-primary">Buy Now</button>
+            </form>
+            {% else %}
+            <a href="/login" class="btn btn-lg btn-secondary">Login to Buy</a>
+            {% endif %}
+            {% else %}
+            <span class="badge bg-danger">Out of Stock</span>
+            {% endif %}
+        </div>
+
+        <div class="mt-5">
+            <a href="/" class="btn btn-outline-secondary">&larr; Back to Browse</a>
+        </div>
+
+        <hr>
+
+        <div class="mt-5">
+            <h3>Reviews</h3>
+            {% if book.reviews %}
+            {% for review in book.reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% for i in range(review.rating) %}
+                        <i class="bi bi-star-fill text-warning"></i>
+                        {% endfor %}
+                        {% for i in range(5 - review.rating) %}
+                        <i class="bi bi-star text-warning"></i>
+                        {% endfor %}
+                    </h5>
+                    <p class="card-text">{{ review.comment }}</p>
+                    <p class="card-text"><small class="text-muted">Posted on {{ review.date_posted.strftime('%Y-%m-%d')
+                            }}</small></p>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>No reviews yet. Be the first to review!</p>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <h4 class="mt-4">Leave a Review</h4>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <div class="rate">
+                        <input type="radio" id="star5" name="rating" value="5" required />
+                        <label for="star5" title="text">5 stars</label>
+                        <input type="radio" id="star4" name="rating" value="4" />
+                        <label for="star4" title="text">4 stars</label>
+                        <input type="radio" id="star3" name="rating" value="3" />
+                        <label for="star3" title="text">3 stars</label>
+                        <input type="radio" id="star2" name="rating" value="2" />
+                        <label for="star2" title="text">2 stars</label>
+                        <input type="radio" id="star1" name="rating" value="1" />
+                        <label for="star1" title="text">1 star</label>
+                    </div>
+                </div>
+                <!-- Clear fix for floating elements -->
+                <div class="clearfix"></div>
+
+                <div class="mb-3 mt-2">
+                    <label for="comment" class="form-label">Comment</label>
+                    <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+            </form>
+            {% else %}
+            <div class="mt-4">
+                <a href="/login" class="btn btn-secondary">Login to Leave a Review</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <h1 align="center" class="mb-4">Admin Dashboard</h1>
+
+        <div class="card shadow mb-5">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Add a New Book</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Book Title</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Author</label>
+                            <input type="text" class="form-control" name="author" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Price ($)</label>
+                            <input type="number" step="0.01" class="form-control" name="price" min="0" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Stock</label>
+                            <input type="number" class="form-control" name="stock" min="0" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Cover Image</label>
+                            <input type="file" class="form-control" name="image" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="col-12 d-grid">
+                            <button type="submit" class="btn btn-success">Add Book</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <h3 class="mb-3">Inventory Management</h3>
+        <div class="card shadow">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in books %}
+                            <tr>
+                                <td>{{ book.id }}</td>
+                                <td>{{ book.title }}</td>
+                                <td>{{ book.author }}</td>
+                                <td>${{ book.price }}</td>
+                                <td>
+                                    {% if book.stock < 5 %} <span class="text-danger fw-bold">{{ book.stock }}</span>
+                                        {% else %}
+                                        {{ book.stock }}
+                                        {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/delete-book/{{ book.id }}" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to delete \u0022{{ book.title }}\u0022?')">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
